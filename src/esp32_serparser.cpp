@@ -261,3 +261,7 @@ void ESP32SerParser::get_params(int line_no, int param_no, char *param) {
 		strncpy(param, output_lines[line_no][param_no], SERPARSER_MAX_PARAM_CHARS - 1);
 	}
 }
+
+void ESP32SerParser::write_bytes(const char *data) {
+        uart_write_bytes(uart_num, data, strlen(data));
+}

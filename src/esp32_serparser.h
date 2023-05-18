@@ -6,7 +6,7 @@
 #include "driver/uart.h"
 #include "HardwareSerial.h"
 
-#define SERPARSER_TX_BUF_SIZE       256
+#define SERPARSER_TX_BUF_SIZE       1024
 #define SERPARSER_RX_BUF_SIZE       1024
 #define SERPARSER_RX_TIMEOUT_MS     200
 #define	SERPARSER_TASK_PRIORITY     8
@@ -49,6 +49,7 @@ class ESP32SerParser {
     void begin(uint32_t _baudrate);
     bool is_error(void);
     void get_params(int line_no, int param_no, char *param);
+    void write_bytes(const char *data);
 
 };
 
