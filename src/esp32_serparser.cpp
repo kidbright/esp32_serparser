@@ -80,7 +80,7 @@ void ESP32SerParser::serparser_extract_params(int line_no, String str, ParamsTyp
 
 			//Serial.print(temp_str);
 			//Serial.print(" ");
-			strncpy(output_lines[line_no][i], temp_str.c_str(), SERPARSER_MAX_PARAM_CHARS - 1);			
+			strncpy(output_lines[line_no][i], temp_str.c_str(), SERPARSER_MAX_PARAM_CHARS - 1);
 		}
 
 		if (o_index != -1) {
@@ -97,7 +97,7 @@ void ESP32SerParser::serparser_extract_params(int line_no, String str, ParamsTyp
 
 void ESP32SerParser::SerParserTask(void *pvParameters) {
 	ESP32SerParser *serparser = (ESP32SerParser *)pvParameters;
-	int i;	
+	int i, or_index;
 	char ch;
 	ParamsType params;
 
@@ -126,7 +126,7 @@ void ESP32SerParser::SerParserTask(void *pvParameters) {
 							
 						// check end of line
 						if (ch == '\n') {
-							// Serial.print(lines[line_index]);
+							//Serial.print(serparser->lines[serparser->line_index]);
 
 							// scan @12 for NECTEC
 							if (!serparser->found_NECTEC) {
@@ -143,7 +143,7 @@ void ESP32SerParser::SerParserTask(void *pvParameters) {
 							}
 							else {
 								// scan @1 for RUN MPPT
-								if (serparser->lines[serparser->line_index].substring(1, 9) == "RUN MPPT") {
+								if (serparser->lines[serparser->line_index].substring(1, 4) == "RUN") {
 									// go to process frame
 									serparser->state = s_serparser_process;
 									// just break
@@ -180,6 +180,13 @@ void ESP32SerParser::SerParserTask(void *pvParameters) {
 
 					for (i = 0; i <= 22; i++) {
 						serparser->serparser_extract_params(i, serparser->lines[i], &params);
+
+						if (i == 0) {
+							if (serparser->lines[i].substring(0, 4) == "@Set") {
+								or_index = serparser->lines[i].indexOf('|');
+								strncpy(serparser->output_lines[0][0], serparser->lines[i].substring(0, or_index).c_str(), SERPARSER_MAX_PARAM_CHARS - 1);
+							}							
+						}
 					}				
 				}
 
